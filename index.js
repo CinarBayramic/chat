@@ -9,12 +9,12 @@ const io = new Server(server);
 app.use('/', express.static('public'))
 var users_live=0;
 var users_total = 0;
-var Messages= ["Çınar>Discord Bitti","Discord>evet:("];
+var Messages= [""];
 /*app.get('/', (req, res) => {
   res.send('<h1>Hello world</h1>');
 });*/
 
-server.listen(3000, () => {
+server.listen(8080, () => {
   console.log('server running at http://localhost:3000');
 });
 io.on('connection', (socket) => {
