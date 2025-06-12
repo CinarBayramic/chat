@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+</head>
+<body>
+    <script>
+        function sendMessage(msg,name) {
+            socket.emit("message",name + ">" + msg);
+        }
+        //const { io } = require("socket.io-client");
+        const socket = io();
+        socket.on('M_recv', (msg) => {
+            let a = document.getElementById("messageArea")
+            //const val = "Your desired text"; // Set the value
+            const p = document.createElement("p"); // Create the <p> element
+            p.textContent = msg; // Set its text content
+
+            a.appendChild(p);
+            
+        });
+        socket.on('update', (msg) => {
+            document.getElementById("display").innerHTML = "live user count:" + msg;
+            
+        });
+        socket.on('update_total', (msg) => {
+            document.getElementById("display2").innerHTML = "total visit count after start:" + msg;
+        });
+             
+    </script>
+    <p id="display">hello world!!</p>
+    <p id="display2">total visit count:</p>
+    <input id="messagebox"><input id="namebox"><button onclick="sendMessage(document.getElementById('messagebox').value,document.getElementById('namebox').value);">send</button>
+    <div id="messageArea" style="width: max-content;height: 300px;"></div>
+</body>
+</html>
