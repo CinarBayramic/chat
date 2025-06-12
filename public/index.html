@@ -8,11 +8,20 @@
 </head>
 <body>
     <script>
+        var lastsent = 0;
         function sendMessage(msg,name) {
+            if(lastsent > 2) {
             socket.emit("message",name + ">" + msg);
+            lastsent=0;
+            }
         }
         //const { io } = require("socket.io-client");
         const socket = io();
+        socket.on('clear',()=> {
+            let a = document.getElementById("messageArea")
+        a.innerHTML = ""; // Clears all child elements
+
+        })
         socket.on('M_recv', (msg) => {
             let a = document.getElementById("messageArea")
             //const val = "Your desired text"; // Set the value
@@ -29,7 +38,11 @@
         socket.on('update_total', (msg) => {
             document.getElementById("display2").innerHTML = "total visit count after start:" + msg;
         });
-             
+        setInterval(function() {
+        lastsent++;
+        console.log(lastsent);
+        }, 400);
+
     </script>
     <p id="display">hello world!!</p>
     <p id="display2">total visit count:</p>

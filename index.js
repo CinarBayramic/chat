@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
 });
 setInterval(function() {
     tick++;
-    if (tick % 3 === 0) {
+    if (tick % 30 === 0) {
         Messages.push("--------30 seconds until reset--------");
     }
     
@@ -51,5 +51,6 @@ setInterval(function() {
         Messages.length = 0;
         console.log("clearing...");
         Messages.push("--------Messages reset!--------");
+        io.emit("clear")
     }
 }, 1000); // Runs every second
