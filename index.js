@@ -1,4 +1,5 @@
 const express = require('express');
+const { clear } = require('node:console');
 const { createServer } = require('node:http');
 const { join } = require('node:path');
 const { Server } = require('socket.io');
@@ -45,7 +46,8 @@ setInterval(function() {
     tick++;
     if (tick % 10 === 0) {
         Messages.push(""+`--------${600 -tick} seconds until reset--------`);
-        io.emit(Messages[Messages.length]);
+        io.emit("M_recv",""+`--------${600 -tick} seconds until reset--------`);
+
         console.log(`--------${600 -tick} seconds until reset--------`);
     }
     
