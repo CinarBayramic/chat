@@ -16,7 +16,7 @@ var tick =0;
 });*/
 
 server.listen(8080, () => {
-  console.log('server running at http://localhost:3000');
+  console.log('server running at http://localhost:8080');
 });
 io.on('connection', (socket) => {
   users_live++;
@@ -43,11 +43,13 @@ io.on('connection', (socket) => {
 });
 setInterval(function() {
     tick++;
-    if (tick % 30 === 0) {
-        Messages.push("--------30 seconds until reset--------");
+    if (tick % 10 === 0) {
+        Messages.push(""+`--------${600 -tick} seconds until reset--------`);
+        io.emit(Messages[Messages.length]);
+        console.log(`--------${600 -tick} seconds until reset--------`);
     }
     
-    if (tick % 60 === 0) {
+    if (tick % 600  === 0) {
         Messages.length = 0;
         console.log("clearing...");
         Messages.push("--------Messages reset!--------");

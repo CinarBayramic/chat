@@ -8,11 +8,14 @@
 </head>
 <body>
     <script>
+        var localtick=0;
         var lastsent = 0;
         function sendMessage(msg,name) {
             if(lastsent > 2) {
             socket.emit("message",name + ">" + msg);
             lastsent=0;
+            } else {
+                alert("you have to wait 800ms between messages!");
             }
         }
         //const { io } = require("socket.io-client");
@@ -40,12 +43,17 @@
         });
         setInterval(function() {
         lastsent++;
-        console.log(lastsent);
+        //console.log(lastsent);
         }, 400);
+        setInterval(function() {
+        localtick++;
+        document.getElementById("tickdisplay").innerHTML = "local tick:"+ localtick;
+        }, 1000);
 
     </script>
     <p id="display">hello world!!</p>
     <p id="display2">total visit count:</p>
+    <p id="tickdisplay"></p>
     <input id="messagebox"><input id="namebox"><button onclick="sendMessage(document.getElementById('messagebox').value,document.getElementById('namebox').value);">send</button>
     <div id="messageArea" style="width: max-content;height: 300px;"></div>
 </body>
