@@ -10,6 +10,7 @@ app.use('/', express.static('public'))
 var users_live=0;
 var users_total = 0;
 var Messages= [""];
+var tick =0;
 /*app.get('/', (req, res) => {
   res.send('<h1>Hello world</h1>');
 });*/
@@ -33,9 +34,22 @@ io.on('connection', (socket) => {
   socket.on("message",(data) => {
     Messages.push(data);
     console.log(data);
+    if(data.length < 300) {
     io.emit("M_recv",data);
+    } else {
+    io.emit("M_recv","ömer siteye giriş yapmış");
+    }
   });
 });
-setTimeout(() => {
-    Messages=[""]
-}, 40000);
+setInterval(function() {
+    tick++;
+    if (tick % 3 === 0) {
+        Messages.push("--------30 seconds until reset--------");
+    }
+    
+    if (tick % 60 === 0) {
+        Messages.length = 0;
+        console.log("clearing...");
+        Messages.push("--------Messages reset!--------");
+    }
+}, 1000); // Runs every second
