@@ -28,6 +28,7 @@ io.on('connection', (socket) => {
     users_live--;
     io.emit("update",users_live)
     io.emit("update_total",users_total)
+    console.log('user count->'+users_live);
   });
   socket.on("message",(data) => {
     Messages.push(data);
@@ -35,3 +36,6 @@ io.on('connection', (socket) => {
     io.emit("M_recv",data);
   });
 });
+setTimeout(() => {
+    Messages=[""]
+}, 40000);
