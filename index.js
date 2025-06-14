@@ -41,14 +41,24 @@ io.on('connection', (socket) => {
     io.emit("M_recv","ömer siteye giriş yapmış");
     }
   });
+  socket.on("synct",(data) => {//socket.emit("BC","message")
+    socket.emit("T_SYNC",tick);
+  });
+  socket.on("BC",(data) => {//socket.emit("BC","message")
+    Messages.push(data);
+    console.log("broadcast"+data);
+    if(data.length < 300) {
+    io.emit("BROADCAST",data);
+    }
+  });
 });
 setInterval(function() {
     tick++;
     if (tick % 10 === 0) {
-        Messages.push(""+`--------${600 -tick} seconds until reset--------`);
-        io.emit("M_recv",""+`--------${600 -tick} seconds until reset--------`);
+        Messages.push(""+`--------${600-(tick%600)} seconds until reset--------`);
+        io.emit("M_recv",""+`--------${600-(tick%600)} seconds until reset--------`);
 
-        console.log(`--------${600 -tick} seconds until reset--------`);
+        console.log(`--------${600-(tick%600)} seconds until reset--------`);
     }
     
     if (tick % 600  === 0) {

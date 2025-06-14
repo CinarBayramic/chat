@@ -4,11 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.7/lib/p5.js"></script>
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <style>
+        div {
+        overflow: scroll;
+        }
+
+        #messageArea {
+            border-color:black;
+            background-color:white ;
+            border-width:3px;
+            width: 300px;
+            height: 300px;
+            display:list-item;
+            padding-left:30%;
+        }
+    </style>
 </head>
 <body>
     <script>
         var localtick=0;
+        
         var lastsent = 0;
         function sendMessage(msg,name) {
             if(lastsent > 2) {
@@ -20,16 +37,21 @@
         }
         //const { io } = require("socket.io-client");
         const socket = io();
+        socket.emit("synct");
         socket.on('clear',()=> {
             let a = document.getElementById("messageArea")
         a.innerHTML = ""; // Clears all child elements
 
         })
-        socket.on('M_recv', (msg) => {
+        socket.on('T_SYNC', (msg) => {//socket.emit("BC","message") for broadcast
+            localtick = msg;
+            
+        });
+        socket.on('M_recv', (msg) => {//socket.emit("BC","message") for broadcast
             let a = document.getElementById("messageArea")
             //const val = "Your desired text"; // Set the value
             const p = document.createElement("p"); // Create the <p> element
-            p.textContent = msg; // Set its text content
+            p.textContent = localtick +" "+ msg; // Set its text content
 
             a.appendChild(p);
             
@@ -41,20 +63,27 @@
         socket.on('update_total', (msg) => {
             document.getElementById("display2").innerHTML = "total visit count after start:" + msg;
         });
+        socket.on('BROADCAST', (msg) => {
+            alert(msg)
+        });
         setInterval(function() {
         lastsent++;
         //console.log(lastsent);
         }, 400);
         setInterval(function() {
         localtick++;
-        document.getElementById("tickdisplay").innerHTML = "local tick:"+ localtick;
+        document.getElementById("tickdisplay").innerHTML = "local tick:"+localtick;
         }, 1000);
 
+
     </script>
+    
+    <!-- <div id="canvasdiv"><script src="sketch.js"></script></div>-->
     <p id="display">hello world!!</p>
     <p id="display2">total visit count:</p>
     <p id="tickdisplay"></p>
     <input id="messagebox"><input id="namebox"><button onclick="sendMessage(document.getElementById('messagebox').value,document.getElementById('namebox').value);">send</button>
-    <div id="messageArea" style="width: max-content;height: 300px;"></div>
+    <div id="messageArea" style="border-radius: 3%;border-width: 2px;border-style: solid;"></div>
+    
 </body>
 </html>
