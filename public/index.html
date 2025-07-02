@@ -10,7 +10,20 @@
         div {
         overflow: scroll;
         }
+        body {
+        cursor: none;
+        }
 
+        .click-circle {
+            pointer-events: none;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: rgb(0, 255, 0);
+            border-radius: 100%;
+        }
         #messageArea {
             border-color:black;
             background-color:white ;
@@ -24,8 +37,9 @@
 </head>
 <body>
     <script>
+        var lastmouse = 0;
         var localtick=0;
-        
+        var id = 0;
         var lastsent = 0;
         function sendMessage(msg,name) {
             if(lastsent > 2) {
@@ -63,6 +77,16 @@
         socket.on('update_total', (msg) => {
             document.getElementById("display2").innerHTML = "total visit count after start:" + msg;
         });
+        socket.on('Click', (msg) => {
+            let r = 3;
+            const circle = document.createElement("div");
+            circle.classList.add("click-circle");
+            circle.style.top = `${msg.Y-r}px`
+            circle.style.left = `${msg.X-r}px`
+            document.body.appendChild(circle);
+            setTimeout(()=>circle.remove(),50);
+        }) 
+
         socket.on('BROADCAST', (msg) => {
             alert(msg)
         });
@@ -71,9 +95,22 @@
         //console.log(lastsent);
         }, 400);
         setInterval(function() {
+        lastmouse=0;
         localtick++;
         document.getElementById("tickdisplay").innerHTML = "local tick:"+localtick;
         }, 1000);
+        document.addEventListener("click", (e) => {
+            socket.emit("mouseClick",{"X":e.clientX,"Y":e.clientY});
+            /*const circle = document.createElement("div");
+            circle.classList.add("click-circle");
+            circle.style.top = `${e.clientY}px`
+            circle.style.left = `${e.clientX}px`
+            document.body.appendChild(circle);
+            setTimeout(()=>circle.remove(),500);*/
+        });
+        document.addEventListener("mousemove", (event) => { 
+            socket.emit("mousemove",{"Y":event.clientY,"X":event.clientX})
+        })
 
 
     </script>

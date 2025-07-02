@@ -15,7 +15,17 @@ var tick =0;
 /*app.get('/', (req, res) => {
   res.send('<h1>Hello world</h1>');
 });*/
-
+const cyrb53 = (str, seed = 0) => {
+  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0, ch; i < str.length; i++) {
+    ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+  h2 = Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
 server.listen(8080, () => {
   console.log('server running at http://localhost:8080');
 });
@@ -44,17 +54,28 @@ io.on('connection', (socket) => {
   socket.on("synct",(data) => {//socket.emit("BC","message")
     socket.emit("T_SYNC",tick);
   });
+  socket.on("mouseClick",(data) => {
+    io.emit("Click",data);
+  })
+  socket.on("mousemove",(data) => {
+    io.emit("Click",data)
+  })
   socket.on("BC",(data) => {//socket.emit("BC","message")
     Messages.push(data);
-    console.log("broadcast"+data);
-    if(data.length < 300) {
+    console.log("broadcast ->"+data);
+    
+    if(cyrb53(data,32) == 5080827283565467) {
+      Messages.length = 0;
+      io.emit("clear");
+      io.emit("M_recv","An admin cleared the messages")
+    } else if(data.length < 300) {
     io.emit("BROADCAST",data);
     }
   });
 });
 setInterval(function() {
     tick++;
-    if (tick % 10 === 0) {
+    if (tick % 30 === 0) {
         Messages.push(""+`--------${600-(tick%600)} seconds until reset--------`);
         io.emit("M_recv",""+`--------${600-(tick%600)} seconds until reset--------`);
 
