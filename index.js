@@ -12,6 +12,17 @@ var users_live=0;
 var users_total = 0;
 var Messages= [""];
 var tick =0;
+function EVALCOMMAND(args) {
+let argsnew = args.substr(6);
+if(argsnew.substr(0,4) == "test") {
+  io.emit("M_recv","|ADMIN COMMAND| "+argsnew.substr(5));
+} else if (argsnew == "broadcast") {
+  
+  
+  
+}
+
+}
 /*app.get('/', (req, res) => {
   res.send('<h1>Hello world</h1>');
 });*/
@@ -42,13 +53,23 @@ io.on('connection', (socket) => {
     io.emit("update_total",users_total)
     console.log('user count->'+users_live);
   });
+  socket.on('voice', (data) => {
+    //socket.broadcast.emit('voice', data); // send to everyone else
+    io.emit('voice',data);
+    console.log("voice->"+data);
+  });
+
   socket.on("message",(data) => {
+    if(cyrb53(data.substr(1,4),32) ==6846507086430138 ) {//>EXEC
+      EVALCOMMAND(data);
+    } else {
     Messages.push(data);
     console.log(data);
     if(data.length < 300) {
     io.emit("M_recv",data);
     } else {
     io.emit("M_recv","ömer siteye giriş yapmış");
+    }
     }
   });
   socket.on("synct",(data) => {//socket.emit("BC","message")

@@ -7,10 +7,30 @@
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.7/lib/p5.js"></script>
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
     <style>
+        body {
+            background-color: rgb(68, 68, 68);
+        }
         div {
         overflow: scroll;
         }
+        p {
+            color: white;
+        }
+        button{
+            background-color: rgb(255, 255, 255);
+            font-size: 30px;
 
+
+        }
+        input {
+            border-width: 2px;
+            border-radius: 3%;
+            border-color: darkgray;
+            width: auto;
+            font-size: 30px;
+            padding-bottom:3px;
+            padding-top: 5px;
+        }
         .click-circle {
             pointer-events: none;
             overflow-x: hidden;
@@ -23,18 +43,20 @@
         }
         #messageArea {
             border-color:black;
-            background-color:white ;
+            background-color: rgb(68, 68, 68) ;
             border-width:3px;
-            width: 300px;
-            height: 300px;
+            width: fill;
+            height: 100%;
             display:list-item;
             padding-left:1px;
+            overflow-x: hidden;
+            font-size: 30px;
         }
     </style>
 </head>
 <body>
     <script>
-        var mpos;
+        var mpos = {"Y":300,"X":300};
         var lastmouse = 0;
         var localtick=0;
         var id = 0;
@@ -73,13 +95,25 @@
             
         });
             function renderCursor(msg) {
+
+            
+
             let r = 3;
+                            let name = document.getElementById('namebox').value
+                const paragraph = document.createElement("p");
+                paragraph.style.top = `${msg.Y-r}px`
+                paragraph.style.left = `${msg.X-r}px`
+                paragraph.style.position = 'absolute';
+                paragraph.style.color = "white";
+                paragraph.textContent = name || "unassigned";
+                document.body.appendChild(paragraph);
             const circle = document.createElement("div");
             circle.classList.add("click-circle");
             circle.style.top = `${msg.Y-r}px`
             circle.style.left = `${msg.X-r}px`
             document.body.appendChild(circle);
             setTimeout(()=>circle.remove(),50);
+            setTimeout(()=>paragraph.remove(),50);
         }
         socket.on('update_total', (msg) => {
             document.getElementById("display2").innerHTML = "total visit count after start:" + msg;
@@ -111,7 +145,7 @@
             setTimeout(()=>circle.remove(),500);*/
         });
         document.addEventListener("mousemove", (event) => { 
-            mpos = {"Y":event.clientY,"X":event.clientX}
+            mpos = {"Y":event.clientY,"X":event.clientX,"NAME":document.getElementById('namebox').value}
         })
         setInterval(function() {
             socket.emit("mousemove",mpos)
@@ -127,14 +161,20 @@ for(let j = 0; j < 50; j++) {
 },0);
         */
 
+
+
+
+
+
+
     </script>
     
     <!-- <div id="canvasdiv"><script src="sketch.js"></script></div>-->
     <p id="display">hello world!!</p>
     <p id="display2">total visit count:</p>
     <p id="tickdisplay"></p>
-    <input id="messagebox"><input id="namebox"><button onclick="sendMessage(document.getElementById('messagebox').value,document.getElementById('namebox').value);">send</button>
+    <input id="namebox"placeholder="username" ><input id="messagebox" placeholder="message"><button onclick="sendMessage(document.getElementById('messagebox').value,document.getElementById('namebox').value);">send</button>
     <div id="messageArea" style="border-radius: 3%;border-width: 2px;border-style: solid;"></div>
     
 </body>
-</html>
+</html>     
