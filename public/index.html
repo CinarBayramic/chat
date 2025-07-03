@@ -105,7 +105,7 @@
                 paragraph.style.left = `${msg.X-r}px`
                 paragraph.style.position = 'absolute';
                 paragraph.style.color = "white";
-                paragraph.textContent = name || "unassigned";
+                paragraph.textContent = msg.NAME || "unassigned";
                 document.body.appendChild(paragraph);
             const circle = document.createElement("div");
             circle.classList.add("click-circle");
@@ -119,7 +119,7 @@
             document.getElementById("display2").innerHTML = "total visit count after start:" + msg;
         });
         socket.on('Click', (msg) => {
-            if(msg != mpos)
+            
             renderCursor(msg)
         }) 
 
