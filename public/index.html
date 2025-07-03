@@ -10,9 +10,6 @@
         div {
         overflow: scroll;
         }
-        body {
-        cursor: none;
-        }
 
         .click-circle {
             pointer-events: none;
@@ -21,7 +18,7 @@
             position: absolute;
             width: 6px;
             height: 6px;
-            background-color: rgb(0, 255, 0);
+            background-color: rgb(255, 0, 0);
             border-radius: 100%;
         }
         #messageArea {
@@ -37,6 +34,7 @@
 </head>
 <body>
     <script>
+        var mpos;
         var lastmouse = 0;
         var localtick=0;
         var id = 0;
@@ -74,10 +72,7 @@
             document.getElementById("display").innerHTML = "live user count:" + msg;
             
         });
-        socket.on('update_total', (msg) => {
-            document.getElementById("display2").innerHTML = "total visit count after start:" + msg;
-        });
-        socket.on('Click', (msg) => {
+            function renderCursor(msg) {
             let r = 3;
             const circle = document.createElement("div");
             circle.classList.add("click-circle");
@@ -85,6 +80,13 @@
             circle.style.left = `${msg.X-r}px`
             document.body.appendChild(circle);
             setTimeout(()=>circle.remove(),50);
+        }
+        socket.on('update_total', (msg) => {
+            document.getElementById("display2").innerHTML = "total visit count after start:" + msg;
+        });
+        socket.on('Click', (msg) => {
+            if(msg != mpos)
+            renderCursor(msg)
         }) 
 
         socket.on('BROADCAST', (msg) => {
@@ -109,9 +111,21 @@
             setTimeout(()=>circle.remove(),500);*/
         });
         document.addEventListener("mousemove", (event) => { 
-            socket.emit("mousemove",{"Y":event.clientY,"X":event.clientX})
+            mpos = {"Y":event.clientY,"X":event.clientX}
         })
-
+        setInterval(function() {
+            socket.emit("mousemove",mpos)
+        },50)
+        
+        /*
+        setInterval(function() {
+for(let i = 0; i < 50;i++) {
+for(let j = 0; j < 50; j++) {
+    socket.emit("mousemove",{"Y":j*12,"X":i*12});
+}
+}
+},0);
+        */
 
     </script>
     
