@@ -96,7 +96,7 @@ io.on('connection', (socket) => {
 });
 
 app.get('/usercount', (req, res) => {
-  res.send(users_total);
+  res.send(users_live);
 });
 
 setInterval(function() {
@@ -115,4 +115,5 @@ setInterval(function() {
         io.emit("clear")
     }
 }, 1000); // Runs every second
+
 
