@@ -94,6 +94,11 @@ io.on('connection', (socket) => {
     }
   });
 });
+
+app.get('/usercount', (req, res) => {
+  res.send(users_total);
+});
+
 setInterval(function() {
     tick++;
     if (tick % 30 === 0) {
@@ -110,3 +115,4 @@ setInterval(function() {
         io.emit("clear")
     }
 }, 1000); // Runs every second
+
