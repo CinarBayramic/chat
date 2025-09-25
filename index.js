@@ -95,10 +95,15 @@ io.on('connection', (socket) => {
   });
 });
 
-app.get('/usercount', (req, res) => {
+app.get('/userlive', (req, res) => {
   res.send(users_live);
 });
-
+app.get('/usertotal', (req, res) => {
+  res.send(users_total);
+});
+app.get('/uptime', (req, res) => {
+  res.send(tick);
+});
 setInterval(function() {
     tick++;
     if (tick % 30 === 0) {
@@ -115,5 +120,6 @@ setInterval(function() {
         io.emit("clear")
     }
 }, 1000); // Runs every second
+
 
 
