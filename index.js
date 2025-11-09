@@ -3,7 +3,7 @@ const { clear } = require('node:console');
 const { createServer } = require('node:http');
 const { join } = require('node:path');
 const { Server } = require('socket.io');
-
+const playerPoints = {};
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
@@ -104,6 +104,22 @@ app.get('/usertotal', (req, res) => {
 app.get('/uptime', (req, res) => {
   res.send(tick);
 });
+app.get('/api/getpoint/:username', (req, res) => {
+  const { username } = req.params;
+  const points = playerPoints[username] ?? 0;
+  res.json({ username, points });
+});
+app.get('/api/increment/:username', (req, res) => {
+  const { username } = req.params;
+  const points = playerPoints[username] ?? 0;
+  if(playerPoints[username] == null) {
+    playerPoints[username] = 0;
+  } else {
+    playerPoints[username] ++;
+  }
+  res.json({ username, points });
+});
+
 setInterval(function() {
     tick++;
     if (tick % 30 === 0) {
