@@ -134,6 +134,9 @@ app.get('/usertotal', (req, res) => {
 app.get('/uptime', (req, res) => {
   res.send(tick);
 });
+app.get('/memoryusage', (req, res) => {
+  res.send(process.memoryUsage());
+});
 app.get('/api/getpoint/:username', (req, res) => {
   const { username } = req.params;
   const points = playerPoints[username] ?? 0;
