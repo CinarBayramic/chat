@@ -9,6 +9,10 @@ const server = createServer(app);
 const io = new Server(server);
 app.use('/', express.static('public'))
 var users_live=0;
+
+var bytesReceived = 0;
+var bytesSent = 0;
+
 var users_total = 0;
 var Messages= [""];
 var tick =0;
@@ -41,6 +45,26 @@ server.listen(8080, () => {
   console.log('server running at http://localhost:8080');
 });
 io.on('connection', (socket) => {
+
+
+socket.onAny((event, data) => {
+  try {
+    const size = Buffer.byteLength(JSON.stringify(data ?? ""));
+    bytesReceived += size;
+  } catch (err) {
+    console.error(`Error measuring bytes for event "${event}":`, err);
+  }
+});
+
+
+  const originalEmit = socket.emit;
+  socket.emit = function (event, data) {
+    const size = Buffer.byteLength(JSON.stringify(data));
+    bytesSent += size;
+    return originalEmit.apply(this, arguments);
+  };
+
+
   users_live++;
   users_total++;
   console.log('user count->'+users_live);
@@ -97,6 +121,12 @@ io.on('connection', (socket) => {
 
 app.get('/userlive', (req, res) => {
   res.send(users_live);
+});
+app.get('/recv', (req, res) => {
+  res.send(bytesReceived);
+});
+app.get('/sent', (req, res) => {
+  res.send(bytesSent);
 });
 app.get('/usertotal', (req, res) => {
   res.send(users_total);
